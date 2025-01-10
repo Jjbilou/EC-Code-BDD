@@ -31,14 +31,9 @@ class HomeController extends AbstractController
     public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
         $bookRead = new BookRead();
-
-        if ($this->getUser()) {
-            $userId = $this->getUser()->getId();
-        } else {
-            $userId = 0;
-        }
-        
-        $booksRead = $this->bookReadRepository->findByUserId($userId, false);
+        $user = $this->getUser();
+        $inProgressBooks = $this->bookReadRepository->findByUser($user, false);
+        $booksRead = $this->bookReadRepository->findByUser($user, true);
         $allBooks = $this->bookRepository->findAll();
 
         $form = $this->createForm(AddReadBookForm::class, $bookRead, [
@@ -51,7 +46,7 @@ class HomeController extends AbstractController
 
             $is_read = $form->get('is_read')->getData();
             $bookRead->setRead($is_read);
-            $bookRead->setUserId($this->getUser()->getId());
+            $bookRead->setUser($this->getUser());
             $bookRead->setCreatedAt(new \DateTime());
             $bookRead->setUpdatedAt(new \DateTime());
 
@@ -65,6 +60,7 @@ class HomeController extends AbstractController
         return $this->render('pages/home.html.twig', [
             'form' => $form,
             'booksRead' => $booksRead,
+            'inProgressBooks' => $inProgressBooks,
             'allBooks' => $allBooks,
             'name'      => 'Accueil', // Pass data to the view
         ]);

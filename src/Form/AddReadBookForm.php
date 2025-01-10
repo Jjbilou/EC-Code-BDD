@@ -20,7 +20,7 @@ class AddReadBookForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('book_id', ChoiceType::class, [
+            ->add('book', ChoiceType::class, [
                 'choices' => $this->getBookChoices($options['books'])
             ])
             ->add('description', TextareaType::class, [
@@ -48,7 +48,7 @@ class AddReadBookForm extends AbstractType
     {
         $choices = [];
         foreach ($books as $book) {
-            $choices[$book->getName()] = $book->getId();
+            $choices[$book->getName()] = $book;
         }
 
         return $choices;

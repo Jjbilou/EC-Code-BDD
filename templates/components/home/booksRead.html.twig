@@ -36,44 +36,32 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>
-                            <div class="flex flex-col gap-2">
-                                <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary"
-                                   href="#">
-                                    Le Moine qui vendit sa Ferrari
-                                </a>
-                                <span class="text-2sm text-gray-700 font-normal leading-3">
-                                    Un conte sur la quête du bonheur et du succès intérieur.
-                                </span>
-                            </div>
-                        </td>
-                        <td>Spiritualité</td>
-                        <td>
-                            <div class="rating">
-                                <div class="rating-label checked">
-                                    <i class="rating-on ki-solid ki-star text-base leading-none"></i>
-                                    <i class="rating-off ki-outline ki-star text-base leading-none"></i>
+                    {% for bookRead in booksRead %}
+                        <tr>
+                            <td>
+                                <div class="flex flex-col gap-2">
+                                    <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary"
+                                    href="#">
+                                        {{ bookRead.book.name }}
+                                    </a>
+                                    <span class="text-2sm text-gray-700 font-normal leading-3">
+                                        {{ bookRead.book.description }}
+                                    </span>
                                 </div>
-                                <div class="rating-label checked">
-                                    <i class="rating-on ki-solid ki-star text-base leading-none"></i>
-                                    <i class="rating-off ki-outline ki-star text-base leading-none"></i>
+                            </td>
+                            <td>{{ bookRead.book.category.name }}</td>
+                            <td>
+                                <div class="rating">
+                                    {% for i in 1..5 %}
+                                        <div class="rating-label {% if i <= bookRead.rating %}checked{% endif %}">
+                                            <i class="rating-on ki-solid ki-star text-base leading-none"></i>
+                                            <i class="rating-off ki-outline ki-star text-base leading-none"></i>
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                                <div class="rating-label checked">
-                                    <i class="rating-on ki-solid ki-star text-base leading-none"></i>
-                                    <i class="rating-off ki-outline ki-star text-base leading-none"></i>
-                                </div>
-                                <div class="rating-label checked">
-                                    <i class="rating-on ki-solid ki-star text-base leading-none"></i>
-                                    <i class="rating-off ki-outline ki-star text-base leading-none"></i>
-                                </div>
-                                <div class="rating-label checked">
-                                    <i class="rating-on ki-solid ki-star text-base leading-none"></i>
-                                    <i class="rating-off ki-outline ki-star text-base leading-none"></i>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>

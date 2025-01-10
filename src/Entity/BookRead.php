@@ -14,12 +14,6 @@ class BookRead
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $user_id = null;
-
-    #[ORM\Column(type: Types::BIGINT)]
-    private ?int $book_id = null;
-
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
     private ?string $rating = null;
 
@@ -38,34 +32,11 @@ class BookRead
     #[ORM\Column]
     private ?\DateTime $updated_at = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    #[ORM\ManyToOne(inversedBy: 'bookReads')]
+    private ?Book $book = null;
 
-    public function getUserId(): ?int
-    {
-        return $this->user_id;
-    }
-
-    public function setUserId(int $user_id): static
-    {
-        $this->user_id = $user_id;
-
-        return $this;
-    }
-
-    public function getBookId(): ?int
-    {
-        return $this->book_id;
-    }
-
-    public function setBookId(int $book_id): static
-    {
-        $this->book_id = $book_id;
-
-        return $this;
-    }
+    #[ORM\ManyToOne(inversedBy: 'bookReads')]
+    private ?User $user = null;
 
     public function getRating(): ?string
     {
@@ -135,6 +106,30 @@ class BookRead
     public function setUpdatedAt(\DateTime $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getBook(): ?Book
+    {
+        return $this->book;
+    }
+
+    public function setBook(?Book $book): static
+    {
+        $this->book = $book;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

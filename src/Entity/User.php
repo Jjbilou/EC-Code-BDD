@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -32,6 +34,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, BookRead>
+     */
+    #[ORM\OneToMany(targetEntity: BookRead::class, mappedBy: 'user')]
+    private Collection $bookReads;
+
+    public function __construct()
+    {
+        $this->bookReads = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,5 +119,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, BookRead>
+     */
+    public function getBookReads(): Collection
+    {
+        return $this->bookReads;
+    }
+
+    public function addBookRead(BookRead $bookRead): static
+    {
+        if (!$this->bookReads->contains($bookRead)) {
+            $this->bookReads->add($bookRead);
+            $bookRead->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBookRead(BookRead $bookRead): static
+    {
+        if ($this->bookReads->removeElement($bookRead)) {
+            // set the owning side to null (unless already changed)
+            if ($bookRead->getUser() === $this) {
+                $bookRead->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
