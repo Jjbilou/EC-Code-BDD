@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\BookRead;
 use App\Form\RegistrationFormType;
+use App\Form\AddReadBookForm;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\BookReadRepository;
+use App\Repository\BookRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,20 +21,51 @@ class HomeController extends AbstractController
     private BookReadRepository $readBookRepository;
 
     // Inject the repository via the constructor
-    public function __construct(BookReadRepository $bookReadRepository)
+    public function __construct(BookReadRepository $bookReadRepository, BookRepository $bookRepository)
     {
         $this->bookReadRepository = $bookReadRepository;
+        $this->bookRepository = $bookRepository;
     }
 
     #[Route('/', name: 'app.home')]
-    public function index(): Response
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $userId     = 1;
-        $booksRead  = $this->bookReadRepository->findByUserId($userId, false);
+        $bookRead = new BookRead();
+
+        if ($this->getUser()) {
+            $userId = $this->getUser()->getId();
+        } else {
+            $userId = 0;
+        }
+        
+        $booksRead = $this->bookReadRepository->findByUserId($userId, false);
+        $allBooks = $this->bookRepository->findAll();
+
+        $form = $this->createForm(AddReadBookForm::class, $bookRead, [
+            'books' => $allBooks
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $is_read = $form->get('is_read')->getData();
+            $bookRead->setRead($is_read);
+            $bookRead->setUserId($this->getUser()->getId());
+            $bookRead->setCreatedAt(new \DateTime());
+            $bookRead->setUpdatedAt(new \DateTime());
+
+            $entityManager->persist($bookRead);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app.home');
+        } 
 
         // Render the 'hello.html.twig' template
         return $this->render('pages/home.html.twig', [
+            'form' => $form,
             'booksRead' => $booksRead,
+            'allBooks' => $allBooks,
             'name'      => 'Accueil', // Pass data to the view
         ]);
     }

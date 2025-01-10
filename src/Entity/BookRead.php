@@ -18,7 +18,7 @@ class BookRead
     private ?int $user_id = null;
 
     #[ORM\Column(type: Types::BIGINT)]
-    private ?string $book_id = null;
+    private ?int $book_id = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
     private ?string $rating = null;
@@ -55,12 +55,12 @@ class BookRead
         return $this;
     }
 
-    public function getBookId(): ?string
+    public function getBookId(): ?int
     {
         return $this->book_id;
     }
 
-    public function setBookId(string $book_id): static
+    public function setBookId(int $book_id): static
     {
         $this->book_id = $book_id;
 
