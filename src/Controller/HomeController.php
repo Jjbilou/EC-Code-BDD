@@ -9,6 +9,7 @@ use App\Form\AddReadBookForm;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\BookReadRepository;
 use App\Repository\BookRepository;
+use App\Repository\CategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,10 +22,11 @@ class HomeController extends AbstractController
     private BookReadRepository $readBookRepository;
 
     // Inject the repository via the constructor
-    public function __construct(BookReadRepository $bookReadRepository, BookRepository $bookRepository)
+    public function __construct(BookReadRepository $bookReadRepository, BookRepository $bookRepository, CategoryRepository $categoryRepository)
     {
         $this->bookReadRepository = $bookReadRepository;
         $this->bookRepository = $bookRepository;
+        $this->categoryRepository = $categoryRepository;
     }
 
     #[Route('/', name: 'app.home')]
@@ -34,7 +36,9 @@ class HomeController extends AbstractController
         $user = $this->getUser();
         $inProgressBooks = $this->bookReadRepository->findByUser($user, false);
         $booksRead = $this->bookReadRepository->findByUser($user, true);
+        $allBooksRead = $this->bookReadRepository->findAllByUser($user);
         $allBooks = $this->bookRepository->findAll();
+        $allCategories = $this->categoryRepository->findAll();
 
         $form = $this->createForm(AddReadBookForm::class, $bookRead, [
             'books' => $allBooks
@@ -59,6 +63,8 @@ class HomeController extends AbstractController
         // Render the 'hello.html.twig' template
         return $this->render('pages/home.html.twig', [
             'form' => $form,
+            'allCategories' => $allCategories,
+            'allBooksRead' => $allBooksRead,
             'booksRead' => $booksRead,
             'inProgressBooks' => $inProgressBooks,
             'allBooks' => $allBooks,
@@ -112,6 +118,16 @@ class HomeController extends AbstractController
         // Render the 'hello.html.twig' template
         return $this->render('auth/register.html.twig', [
             'form' => $form, // Pass data to the view
+        ]);
+    }
+
+    #[Route('/explorer', name: 'auth.explorer')]
+    public function explorer(Request $request, EntityManagerInterface $entityManager): Response {
+
+        $allBooksRead = $this->bookReadRepository->findAll();
+
+        return $this->render('pages/explore.html.twig', [
+            'allBooksRead' => $allBooksRead,
         ]);
     }
 }
