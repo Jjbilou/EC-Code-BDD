@@ -20,6 +20,7 @@ class AddReadBookForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            // Permet de choisir parmis tous les livres disponibles
             ->add('book', ChoiceType::class, [
                 'choices' => $this->getBookChoices($options['books'])
             ])
@@ -39,10 +40,6 @@ class AddReadBookForm extends AbstractType
                     '4' => 4,
                     '5' => 5,
                 ],
-                'attr' => [
-                    'min' => 1,
-                    'max' => 5,
-                ],
             ])
             ->add('is_read', CheckboxType::class, [
                 'mapped' => false,
@@ -51,6 +48,7 @@ class AddReadBookForm extends AbstractType
     }
 
     private function getBookChoices($books)
+    // Récupère tous les noms des livres disponibles
     {
         $choices = [];
         foreach ($books as $book) {

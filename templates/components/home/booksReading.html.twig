@@ -64,6 +64,7 @@
 
 <script>
 function AutoModal(dataModal) {
+    // On récupère les infos du livre sur lequel on a cliqué et on l'envoie au modal pour préremplir les champs
     const bookElement = document.getElementById("add_read_book_form_book")
     const selectedOption = Object.values(bookElement.options).find(option => option.textContent === dataModal.book.name);
     bookElement.value = selectedOption.value;

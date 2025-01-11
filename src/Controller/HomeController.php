@@ -37,11 +37,12 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('auth.login'); // Redirige vers la page de login si non connecté
         }
         $user = $this->getUser();
-        $inProgressBooks = $this->bookReadRepository->findByUser($user, false);
-        $booksRead = $this->bookReadRepository->findByUser($user, true);
-        $allBooksRead = $this->bookReadRepository->findAllByUser($user);
-        $allBooks = $this->bookRepository->findAll();
-        $allCategories = $this->categoryRepository->findAll();
+        $inProgressBooks = $this->bookReadRepository->findByUser($user, false); // Tous les livres en cours de lecture par le user connecté
+        $booksRead = $this->bookReadRepository->findByUser($user, true); // Tous les livres lu par le user connecté
+        $allBooksRead = $this->bookReadRepository->findAllByUser($user); // Tous les livres du user connecté
+        $allBooks = $this->bookRepository->findAll(); // Tous les livres
+        $allAllBooksRead = $this->bookReadRepository->findAll(); // Tous les livres lu ou en cours de lecture par qui que ce soit
+        $allCategories = $this->categoryRepository->findAll(); // Toutes les catégories
 
         $form = $this->createForm(AddReadBookForm::class, $bookRead, [
             'books' => $allBooks
@@ -51,12 +52,14 @@ class HomeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            // On récupère la data de is_read, du user et de la date et on les set pour pouvoir les envoyé en BDD
             $is_read = $form->get('is_read')->getData();
             $bookRead->setRead($is_read);
             $bookRead->setUser($this->getUser());
             $bookRead->setCreatedAt(new \DateTime());
             $bookRead->setUpdatedAt(new \DateTime());
 
+            // Envoie en BDD
             $entityManager->persist($bookRead);
             $entityManager->flush();
 
@@ -66,6 +69,7 @@ class HomeController extends AbstractController
         // Render the 'hello.html.twig' template
         return $this->render('pages/home.html.twig', [
             'form' => $form,
+            'allAllBooksRead' => $allAllBooksRead,
             'allCategories' => $allCategories,
             'allBooksRead' => $allBooksRead,
             'booksRead' => $booksRead,
@@ -101,6 +105,7 @@ class HomeController extends AbstractController
     #[Route('/register', name: 'auth.register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
+        // Création d'un nouveau user via la form d'inscription
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -113,8 +118,6 @@ class HomeController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
-
-            // do anything else you need here, like send an email
 
             return $this->redirectToRoute('app.home');
         }
@@ -130,11 +133,13 @@ class HomeController extends AbstractController
         if (!$this->getUser()) {
             return $this->redirectToRoute('auth.login'); // Redirige vers la page de login si non connecté
         }
-        
-        $allBooksRead = $this->bookReadRepository->findAll();
+
+        $allAllBooksRead = $this->bookReadRepository->findAll(); // Tous les livres lu ou en cours de lecture par qui que ce soit
+        $allBooks = $this->bookRepository->findAll(); // Tous les livres
 
         return $this->render('pages/explore.html.twig', [
-            'allBooksRead' => $allBooksRead,
+            'allBooks' => $allBooks,
+            'allAllBooksRead' => $allAllBooksRead,
         ]);
     }
 }

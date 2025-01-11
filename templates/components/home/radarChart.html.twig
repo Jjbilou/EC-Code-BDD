@@ -13,23 +13,26 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script>
+    // Permet de récupérer la liste des catégories
     const booksCategories = {{ allCategories|map(category => category.name)|json_encode|raw }};
 
+    // Compte le nombre de livre lu dans chaque catégorie
     const categoryCounts = booksCategories.reduce((acc, category) => {
         acc[category] = 0;
         return acc;
     }, {});
 
+    // Récupère la catégorie de chaque livre
     const books = [
         {% for book in allBooksRead %}
             {
-                rating: {{ book.rating|json_encode|raw }},
                 category: {{ book.book.category.name|json_encode|raw }}
             }
             {% if not loop.last %},{% endif %}
         {% endfor %}
     ];
 
+    // Compte le nombre de livre lu dans chaque catégorie
     books.forEach(book => {
         categoryCounts[book.category]++;
     });

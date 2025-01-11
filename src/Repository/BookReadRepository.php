@@ -25,6 +25,7 @@ class BookReadRepository extends ServiceEntityRepository
      */
     public function findByUser(User $user, bool $readState): array
     {
+        // Permet de trouver les livres lu ou non lu d'un user
         return $this->createQueryBuilder('r')
             ->where('r.user = :user')
             ->andWhere('r.is_read = :isRead')
@@ -37,9 +38,21 @@ class BookReadRepository extends ServiceEntityRepository
 
     public function findAllByUser(User $user): array
     {
+        // Permet de trouver les livres lu et non lu d'un user
         return $this->createQueryBuilder('r')
             ->where('r.user = :user')
             ->setParameter('user', $user)
+            ->orderBy('r.created_at', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByNameContains(string $searchTerm): array
+    {
+        // Permet de trouver les livres lu et non lu contenant certains caractères
+        return $this->createQueryBuilder('r')
+            ->where('r.book_name LIKE :searchTerm')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%')
             ->orderBy('r.created_at', 'DESC')
             ->getQuery()
             ->getResult();
