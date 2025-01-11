@@ -33,6 +33,9 @@ class HomeController extends AbstractController
     public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
         $bookRead = new BookRead();
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('auth.login'); // Redirige vers la page de login si non connecté
+        }
         $user = $this->getUser();
         $inProgressBooks = $this->bookReadRepository->findByUser($user, false);
         $booksRead = $this->bookReadRepository->findByUser($user, true);
@@ -124,6 +127,10 @@ class HomeController extends AbstractController
     #[Route('/explorer', name: 'auth.explorer')]
     public function explorer(Request $request, EntityManagerInterface $entityManager): Response {
 
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('auth.login'); // Redirige vers la page de login si non connecté
+        }
+        
         $allBooksRead = $this->bookReadRepository->findAll();
 
         return $this->render('pages/explore.html.twig', [
