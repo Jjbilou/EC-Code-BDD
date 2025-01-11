@@ -39,6 +39,19 @@ class Category
         $this->books = new ArrayCollection();
     }
 
+    public function toArray(): array
+    {
+        $data = [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'created_at' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
+        ];
+
+        return $data;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

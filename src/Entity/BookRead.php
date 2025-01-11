@@ -38,6 +38,22 @@ class BookRead
     #[ORM\ManyToOne(inversedBy: 'bookReads')]
     private ?User $user = null;
 
+    public function toArray(): array
+    {
+        $data = [
+            'rating' => $this->getRating(),
+            'description' => $this->getDescription(),
+            'is_read' => $this->isRead(),
+            'cover' => $this->getCover(),
+            'created_at' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            'book' => $this->getBook()->toArray(),
+            'user' => $this->getUser()->toArray(),
+        ];
+
+        return $data;
+    }
+
     public function getRating(): ?string
     {
         return $this->rating;

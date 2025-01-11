@@ -34,10 +34,11 @@
                         <tr>
                             <td>
                                 <div class="flex flex-col gap-2">
-                                    <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary"
-                                       href="#">
+                                    <button class="leading-none font-medium text-sm text-gray-900 hover:text-primary text-start"
+                                    data-modal-toggle="#book_modal"
+                                    onclick="AutoModal({{bookRead.toArray()|json_encode}})">
                                         {{ bookRead.book.name }}
-                                    </a>
+                                    </button>
                                     <span class="text-2sm text-gray-700 font-normal leading-3">
                                     {{ bookRead.book.description }}
                                 </span>
@@ -60,3 +61,22 @@
         </div>
     </div>
 </div>
+
+<script>
+function AutoModal(dataModal) {
+    const bookElement = document.getElementById("add_read_book_form_book")
+    const selectedOption = Object.values(bookElement.options).find(option => option.textContent === dataModal.book.name);
+    bookElement.value = selectedOption.value;
+
+    const descriptionElement = document.getElementById("add_read_book_form_description")
+    descriptionElement.value = dataModal.description
+
+    const ratingElement = document.getElementById("add_read_book_form_rating")
+    ratingElement.value = dataModal.rating[0] 
+    // l'indice 0 car les nombres sont stockés sous forme X.00 alors que rating n'accepte que des nombres entier
+
+    const is_readElement = document.getElementById("add_read_book_form_is_read")
+    is_readElement.checked = dataModal.is_read
+}
+
+</script>

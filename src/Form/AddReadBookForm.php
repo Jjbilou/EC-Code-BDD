@@ -10,10 +10,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class AddReadBookForm extends AbstractType
 {
@@ -31,12 +31,18 @@ class AddReadBookForm extends AbstractType
                     ]),
                 ],
             ])
-            ->add('rating', IntegerType::class, [
+            ->add('rating', ChoiceType::class, [
+                'choices' => [
+                    '1' => 1,
+                    '2' => 2,
+                    '3' => 3,
+                    '4' => 4,
+                    '5' => 5,
+                ],
                 'attr' => [
                     'min' => 1,
                     'max' => 5,
                 ],
-                'required' => true,
             ])
             ->add('is_read', CheckboxType::class, [
                 'mapped' => false,

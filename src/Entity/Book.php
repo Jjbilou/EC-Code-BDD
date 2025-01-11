@@ -37,6 +37,22 @@ class Book
     #[ORM\ManyToOne(inversedBy: 'books')]
     private ?Category $Category = null;
 
+    public function toArray(): array
+    {
+        $data = [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'pages' => $this->getPages(),
+            'publication_date' => $this->getPublicationDate()?->format('Y-m-d'),
+            'created_at' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            'category' => $this->getCategory()->toArray(),
+        ];
+
+        return $data;
+    }
+
     /**
      * @var Collection<int, BookRead>
      */
